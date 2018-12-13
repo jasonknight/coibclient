@@ -14,6 +14,16 @@ type Client interface {
 // Okay, we create a layer between the library and our application
 // that way, if we ever need to override something, or want to
 // switch to a different API library, we can do so easily
+// 
+// Now, this file needs to be refactored a bit, but the gist is here. We
+// want a compatibility layer/interface between our application and the
+// library. What if we need to upgrade the lib? Or maybe we don't like
+// gdax, maybe there's a new shinier one? We want to be free to swap out
+// or customize the backing.
+// 
+// What about using maps? Yes, they are wasting memory, but this is
+// a quickie project and I only have 3-4 hours, so maps are an easy,
+// if oft abused, data structure.
 func GetTicker(client Client, id string) (map[string]string,error) {
 	res := make(map[string]string)
 	ticker,err := client.GetTicker(id)
@@ -27,6 +37,7 @@ func GetTicker(client Client, id string) (map[string]string,error) {
 	res["Bid"] = ticker.Bid
 	res["Ask"] = ticker.Ask
 	res["Volume"] = string(ticker.Volume)
+	res["Id"] = id
 	return res,err
 }
 func PlaceOrder(client Client, id, price, size, side string) (map[string]string,error) {

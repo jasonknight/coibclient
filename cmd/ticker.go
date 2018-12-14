@@ -7,17 +7,7 @@ import (
 	"github.com/jasonknight/coibclient/client"
 	"encoding/json"
 )
-
-// tickerCmd represents the ticker command
-var tickerCmd = &cobra.Command{
-	Use:   "ticker",
-	Short: "Search for a ticker based on ID String, like BTC-USD",
-	Long: `This command will fetch the latest ticker for an
-asset. You can send multiple ids with coibclient ticker BTC-USD BTC-GBP ...etc`,
-	Run: func(cmd *cobra.Command, args []string) {
-		key := viper.GetString("key")
-		secret := viper.GetString("secret")
-		pass := viper.GetString("pass")
+func tickerRun(key,secret,pass string, args []string) string {
 		cli := client.NewClient(key,secret,pass)	
 		var results []map[string]string
 		for i := 0; i < len(args); i++ {
@@ -31,10 +21,21 @@ asset. You can send multiple ids with coibclient ticker BTC-USD BTC-GBP ...etc`,
 		}
 		j,err := json.MarshalIndent(results,"","  ");
 		if err != nil {
-			fmt.Printf("[{\"error\": \"Failed to encode JSON\"}]");
-			return
+			return fmt.Sprintf("[{\"error\": \"Failed to encode JSON\"}]");
 		}
-		fmt.Printf("%s",j)
+		return fmt.Sprintf("%s",j)
+}
+// tickerCmd represents the ticker command
+var tickerCmd = &cobra.Command{
+	Use:   "ticker",
+	Short: "Search for a ticker based on ID String, like BTC-USD",
+	Long: `This command will fetch the latest ticker for an
+asset. You can send multiple ids with coibclient ticker BTC-USD BTC-GBP ...etc`,
+	Run: func(cmd *cobra.Command, args []string) {
+		key := viper.GetString("key")
+		secret := viper.GetString("secret")
+		pass := viper.GetString("pass")
+		fmt.Println(tickerRun(key,secret,pass,args))	
 	},
 }
 
